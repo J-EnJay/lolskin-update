@@ -1,6 +1,6 @@
 import threading
-import time
 import os
+import time
 import shutil
 import zipfile
 import requests
@@ -9,14 +9,13 @@ from bs4 import BeautifulSoup
 from tkinter import *
 
 url = "http://leagueskin.net/p/download-mod-skin-2020-chn"
-html = requests.get(url)
-bs = BeautifulSoup(html.text, "lxml")
-zipUrl = bs.find(id="link_download3")['href']
+# url = "https://www.google.com/"
+bs = None
+
 
 installed = 1
-lastVersion = None
+lastVersion = ''
 currentVersion = None
-text = None
 
 
 # 将函数打包进线程
@@ -42,12 +41,12 @@ def domain():
     textInsert("欢乐的时光就要开始了！")
 
     # 退出
-    windowQuit()
+    windowQuit(2)
 
 
 # 检查更新
 def updateCheck():
-    global installed, lastVersion, currentVersion
+    global installed, lastVersion, currentVersion, bs
     # 本地版本
     try:
         for filename in os.listdir(r'C:\Fraps'):
@@ -59,6 +58,16 @@ def updateCheck():
         installed = 0
 
     # 最新版本
+    textInsert("获取最新版本...")
+    try:
+        html = requests.get(url, timeout=(5, 5))
+        bs = BeautifulSoup(html.text, "lxml")
+    except requests.exceptions.RequestException:
+        textInsert("============错误============")
+        textInsert("连接超时...")
+        textInsert("请检查网站能否打开：")
+        textInsert(url)
+        windowQuit(5)
     lastVersion = bs.find(id="link_download3").text[20:-6]
     textInsert("最新版本：" + lastVersion)
     return currentVersion != lastVersion
@@ -68,6 +77,7 @@ def updateCheck():
 def install():
     try:
         textInsert("正在下载...")
+        zipUrl = bs.find(id="link_download3")['href']
         r = requests.get(zipUrl)
         with open("lolSkin.zip", "wb") as code:
             code.write(r.content)
@@ -95,12 +105,12 @@ def install():
         textInsert("============错误============")
         textInsert(e.__str__())
 
-        windowQuit()
+        windowQuit(5)
 
 
 # 退出
-def windowQuit():
-    time.sleep(2)
+def windowQuit(second):
+    time.sleep(second)
     window.quit()
     window.protocol("WM_DELETE_WINDOW", lambda: sys.exit(0))
 
@@ -112,6 +122,7 @@ def textInsert(message):
     text.insert(END, message + "\n")
     text.config(state="disabled")
     text.see(END)
+    print(message)
 
 
 class MyFrm(Frame):
