@@ -16,6 +16,7 @@ bs = None
 installed = 1
 lastVersion = ''
 currentVersion = None
+link = None
 
 
 # 将函数打包进线程
@@ -46,7 +47,7 @@ def domain():
 
 # 检查更新
 def updateCheck():
-    global installed, lastVersion, currentVersion, bs
+    global installed, lastVersion, currentVersion, bs, link
     # 本地版本
     try:
         for filename in os.listdir(r'C:\Fraps'):
@@ -68,7 +69,9 @@ def updateCheck():
         textInsert("请检查网站能否打开：")
         textInsert(url)
         windowQuit(5)
-    lastVersion = bs.find(id="link_download3").text[20:-6]
+    # lastVersion = bs.find(id="link_download3").text[20:-6]
+    link = bs.find(id="iLinkDownload").attrs.get('value')
+    lastVersion = link[35:-4]
     textInsert("最新版本：" + lastVersion)
     return currentVersion != lastVersion
 
@@ -77,8 +80,7 @@ def updateCheck():
 def install():
     try:
         textInsert("正在下载...")
-        zipUrl = bs.find(id="link_download3")['href']
-        r = requests.get(zipUrl)
+        r = requests.get(link)
         with open("lolSkin.zip", "wb") as code:
             code.write(r.content)
             textInsert("下载完成！")
