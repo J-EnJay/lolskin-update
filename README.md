@@ -22,7 +22,7 @@
 
 使用方法：
 
-1、下载工具，地址：https://gitee.com/zheng_rj/lolskin-update/releases，下载LOLSKIN-tool.zip；
+1、下载工具，地址：https://gitee.com/zheng_rj/lolskin-update/releases ，下载LOLSKIN-tool.zip；
 
 2、解压，内含两个文件，建议不要解压到桌面或系统盘，即可使用；
 
